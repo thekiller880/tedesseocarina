@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>∞ Sacred Vowel Sound Trainer ∞</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+```
+body {
+background: linear-gradient(135deg, #0a0a0a 0%, #1a0033 50%, #000a1a 100%);
+color: #00ffff;
+font-family: 'Courier New', monospace;
+overflow-x: hidden;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 20px;
+}
+
+.container {
+max-width: 1000px;
+width: 100%;
+}
+
+h1 {
+text-align: center;
+font-size: 1.8rem;
+margin: 20px 0;
+text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
+animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.85; }
+}
+
+.canvas-container {
+position: relative;
+width: 100%;
+height: 650px;
+border: 2px solid #ff00ff;
+border-radius: 10px;
+margin: 20px 0;
+box-shadow: 0 0 30px rgba(255, 0, 255, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.2);
+overflow: hidden;
+background: radial-gradient(circle at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.95) 100%);
+cursor: pointer;
+}
+
+canvas {
+display: block;
+width: 100%;
+height: 100%;
+}
+
+.controls {
+background: rgba(26, 0, 51, 0.8);
+border: 1px solid #ff00ff;
+border-radius: 10px;
+padding: 20px;
+margin: 20px 0;
+box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.control-group {
+margin: 15px 0;
+}
+
+label {
+display: block;
+margin-bottom: 8px;
+color: #00ffff;
+font-size: 0.9rem;
+}
+
+.frequency-buttons {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+gap: 10px;
+margin: 15px 0;
+}
+
+button {
+background: linear-gradient(135deg, #1a0033 0%, #33006d 100%);
+border: 2px solid #ff00ff;
+color: #00ffff;
+padding: 10px 16px;
+border-radius: 5px;
+cursor: pointer;
+font-family: 'Courier New', monospace;
+font-size: 0.85rem;
+transition: all 0.3s ease;
+text-shadow: 0 0 5px #00ffff;
+}
+
+button:hover {
+background: linear-gradient(135deg, #33006d 0%, #5500aa 100%);
+box-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
+transform: translateY(-2px);
+}
+
+button.active {
+background: linear-gradient(135deg, #5500aa 0%, #8800ff 100%);
+box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+}
+
+.play-button {
+width: 100%;
+font-size: 1.1rem;
+padding: 15px;
+margin: 15px 0;
+background: linear-gradient(135deg, #ff00ff 0%, #8800ff 100%);
+}
+
+.play-button.playing {
+background: linear-gradient(135deg, #00ffff 0%, #0088ff 100%);
+}
+
+input[type="range"] {
+width: 100%;
+height: 6px;
+border-radius: 3px;
+background: linear-gradient(to right, #1a0033, #ff00ff);
+outline: none;
+-webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 20px;
+height: 20px;
+border-radius: 50%;
+background: #00ffff;
+cursor: pointer;
+box-shadow: 0 0 10px #00ffff;
+}
+
+input[type="range"]::-moz-range-thumb {
+width: 20px;
+height: 20px;
+border-radius: 50%;
+background: #00ffff;
+cursor: pointer;
+box-shadow: 0 0 10px #00ffff;
+border: none;
+}
+
+.info {
+background: rgba(0, 255, 255, 0.1);
+border: 1px solid #00ffff;
+border-radius: 5px;
+padding: 15px;
+margin: 20px 0;
+font-size: 0.85rem;
+line-height: 1.6;
+}
+
+.frequency-display {
+text-align: center;
+font-size: 1.3rem;
+color: #ff00ff;
+text-shadow: 0 0 10px #ff00ff;
+margin: 10px 0;
+}
+
+.quote {
+text-align: center;
+font-style: italic;
+color: #8800ff;
+margin: 15px 0;
+font-size: 0.85rem;
+opacity: 0.9;
+line-height: 1.5;
+}
+
+.mode-indicator {
+text-align: center;
+color: #00ffff;
+font-size: 0.9rem;
+margin: 10px 0;
+}
+
+.rosicrucian-symbol {
+text-align: center;
+font-size: 2rem;
+color: #ff00ff;
+text-shadow: 0 0 15px #ff00ff;
+margin: 10px 0;
+}
+</style>
+```
+
+</head>
+<body>
+<div class="container">
+<div class="rosicrucian-symbol">✦ ✧ ✦</div>
+<h1>∞ SACRED VOWEL SOUND TRAINER ∞</h1>
+
+```
+<div class="quote">
+"The human is a rope, fastened between beast and Overhuman—a rope over an abyss.<br>
+What is great in the human is that it is a bridge and not a goal."<br>
+— Nietzsche, Thus Spoke Zarathustra
+</div>
+
+<div class="canvas-container" id="canvasContainer">
+<canvas id="geometryCanvas"></canvas>
+</div>
+
+<div class="mode-indicator">Click the chakra centers to activate vowel sounds • The bridge awaits</div>
+
+<div class="controls">
+<div class="frequency-display" id="freqDisplay">Select gamma enhancement mode</div>
+
+<div class="control-group">
+<label>Gamma Brainwave Enhancement:</label>
+<div class="frequency-buttons">
+<button class="freq-btn" data-mode="gamma40">
+Gamma 40Hz<br><small>Focus</small>
+</button>
+<button class="freq-btn" data-mode="gamma111">
+Gamma 111Hz<br><small>Peak Learning</small>
+</button>
+<button class="freq-btn" data-mode="theta">
+Theta 6Hz<br><small>Deep State</small>
+</button>
+<button class="freq-btn" data-mode="schumann">
+Schumann 7.83Hz<br><small>Earth Sync</small>
+</button>
+</div>
+</div>
+
+<button class="play-button" id="playBtn">▶ CROSS THE ABYSS</button>
+
+<div class="control-group">
+<label>Volume: <span id="volumeDisplay">30%</span></label>
+<input type="range" id="volumeSlider" min="0" max="100" value="30">
+</div>
+
+<div class="control-group">
+<label>Rhythm BPM: <span id="bpmDisplay">80</span></label>
+<input type="range" id="bpmSlider" min="60" max="160" value="80" step="10">
+</div>
+</div>
+
+<div class="info">
+<strong>AMORC Vowel Sound System:</strong> Click each chakra point to hear the sacred vowel sound at its corresponding frequency. The sounds activate specific energy centers in the body. Use gamma enhancement (111Hz recommended) to deepen your receptivity. Sync your breath and heartbeat with the rhythm for full entrainment.
+<br><br>
+<strong>Chakra Mapping:</strong> Pineal (AUM/OM), Pituitary (RA/MA), Throat (THO), Thymus (EHM), Heart (EH), Solar Plexus (KHEI/MEH)
+</div>
+
+<div class="quote">
+"What a piece of work is a man! How noble in reason, how infinite in faculty...<br>
+And yet, to me, what is this quintessence of dust?"<br>
+— Hamlet, Act II Scene 2
+</div>
+
+<div class="rosicrucian-symbol">✦ ✧ ✦</div>
+</div>
+
+<script>
+// Audio setup
+let audioContext = null;
+let osc1 = null;
+let osc2 = null;
+let gainNode = null;
+let isPlaying = false;
+let currentMode = 'gamma111';
+let currentBPM = 80;
+let noteOsc = null;
+let noteGain = null;
+
+const frequencies = {
+gamma40: { base: 440, diff: 40, label: 'Gamma 40Hz - Focus Enhancement' },
+gamma111: { base: 222, diff: 111, label: 'Gamma 111Hz - Peak Learning State' },
+theta: { base: 200, diff: 6, label: 'Theta 6Hz - Deep Meditation' },
+schumann: { base: 432, diff: 7.83, label: 'Schumann 7.83Hz - Earth Resonance' }
+};
+
+// AMORC Sacred Vowel Sound System with Chakra Mapping
+const chakras = [
+{ name: 'Pineal', vowel: 'AUM', freq: 146.83, note: 'D', y: 0.05, color: '#8800ff', size: 25 },
+{ name: 'Pituitary', vowel: 'RA', freq: 440, note: 'A', y: 0.15, color: '#4400ff', size: 24 },
+{ name: 'Throat', vowel: 'THO', freq: 369.99, note: 'F#', y: 0.30, color: '#0088ff', size: 23 },
+{ name: 'Thymus', vowel: 'EHM', freq: 493.88, note: 'B', y: 0.45, color: '#00ff88', size: 22 },
+{ name: 'Heart', vowel: 'EH', freq: 261.63, note: 'C', y: 0.55, color: '#ffff00', size: 26 },
+{ name: 'Solar Plexus', vowel: 'KHEI', freq: 329.63, note: 'E', y: 0.68, color: '#ff8800', size: 24 },
+{ name: 'Root', vowel: 'MEH', freq: 523.25, note: 'C', y: 0.85, color: '#ff0000', size: 23 }
+];
+
+let beatInterval = null;
+let activeChakra = -1;
+let pulsePhase = 0;
+let rotation = 0;
+
+// Canvas setup
+const canvas = document.getElementById('geometryCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Canvas click handler
+canvas.addEventListener('click', (e) => {
+const rect = canvas.getBoundingClientRect();
+const x = e.clientX - rect.left;
+const y = e.clientY - rect.top;
+
+chakras.forEach((chakra, i) => {
+const chakraY = canvas.height * chakra.y;
+const chakraX = canvas.width / 2;
+const distance = Math.sqrt((x - chakraX) ** 2 + (y - chakraY) ** 2);
+
+if (distance < chakra.size + 10) {
+playVowelSound(chakra, i);
+}
+});
+});
+
+function playVowelSound(chakra, index) {
+if (!audioContext) {
+audioContext = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+if (noteOsc) {
+noteOsc.stop();
+noteOsc = null;
+}
+
+noteGain = audioContext.createGain();
+noteGain.connect(audioContext.destination);
+
+noteOsc = audioContext.createOscillator();
+noteOsc.frequency.value = chakra.freq;
+noteOsc.type = 'sine';
+
+const now = audioContext.currentTime;
+const vol = document.getElementById('volumeSlider').value / 100;
+noteGain.gain.setValueAtTime(vol * 0.6, now);
+noteGain.gain.exponentialRampToValueAtTime(0.01, now + 2);
+
+noteOsc.connect(noteGain);
+noteOsc.start(now);
+noteOsc.stop(now + 2);
+
+activeChakra = index;
+setTimeout(() => {
+activeChakra = -1;
+}, 1500);
+}
+
+// Frequency selection
+document.querySelectorAll('.freq-btn').forEach(btn => {
+btn.addEventListener('click', () => {
+document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
+currentMode = btn.dataset.mode;
+updateFrequencyDisplay();
+if (isPlaying) {
+updateOscillators();
+startBeat();
+}
+});
+});
+
+// Play/Pause
+const playBtn = document.getElementById('playBtn');
+playBtn.addEventListener('click', togglePlay);
+
+function togglePlay() {
+if (!isPlaying) {
+startAudio();
+playBtn.textContent = '⏸ RETURN FROM ABYSS';
+playBtn.classList.add('playing');
+} else {
+stopAudio();
+playBtn.textContent = '▶ CROSS THE ABYSS';
+playBtn.classList.remove('playing');
+}
+}
+
+function startAudio() {
+if (!audioContext) {
+audioContext = new (window.AudioContext || window.webkitAudioContext)();
+}
+gainNode = audioContext.createGain();
+gainNode.connect(audioContext.destination);
+
+const vol = document.getElementById('volumeSlider').value / 100;
+gainNode.gain.value = vol * 0.7;
+
+osc1 = audioContext.createOscillator();
+osc2 = audioContext.createOscillator();
+
+osc1.type = 'sine';
+osc2.type = 'sine';
+
+updateOscillators();
+
+osc1.connect(gainNode);
+osc2.connect(gainNode);
+
+osc1.start();
+osc2.start();
+
+startBeat();
+
+isPlaying = true;
+}
+
+function updateOscillators() {
+if (!osc1 || !osc2) return;
+const freq = frequencies[currentMode];
+osc1.frequency.value = freq.base;
+osc2.frequency.value = freq.base + freq.diff;
+}
+
+function stopAudio() {
+if (osc1) osc1.stop();
+if (osc2) osc2.stop();
+if (audioContext) audioContext.close();
+audioContext = null;
+if (beatInterval) clearInterval(beatInterval);
+osc1 = null;
+osc2 = null;
+gainNode = null;
+beatInterval = null;
+isPlaying = false;
+}
+
+function startBeat() {
+if (beatInterval) clearInterval(beatInterval);
+
+const interval = 60000 / currentBPM;
+
+beatInterval = setInterval(() => {
+playBeat();
+}, interval);
+}
+
+function playBeat() {
+if (!audioContext) return;
+
+const beatGain = audioContext.createGain();
+beatGain.connect(audioContext.destination);
+
+const now = audioContext.currentTime;
+const vol = document.getElementById('volumeSlider').value / 100;
+
+const beatOsc = audioContext.createOscillator();
+beatOsc.frequency.setValueAtTime(100, now);
+beatOsc.frequency.exponentialRampToValueAtTime(50, now + 0.15);
+beatGain.gain.setValueAtTime(vol * 0.5, now);
+beatGain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+beatOsc.connect(beatGain);
+beatOsc.start(now);
+beatOsc.stop(now + 0.25);
+}
+
+// Volume control
+const volumeSlider = document.getElementById('volumeSlider');
+const volumeDisplay = document.getElementById('volumeDisplay');
+volumeSlider.addEventListener('input', (e) => {
+const vol = e.target.value;
+volumeDisplay.textContent = vol + '%';
+if (gainNode) {
+gainNode.gain.value = (vol / 100) * 0.7;
+}
+});
+
+// BPM control
+const bpmSlider = document.getElementById('bpmSlider');
+const bpmDisplay = document.getElementById('bpmDisplay');
+bpmSlider.addEventListener('input', (e) => {
+currentBPM = parseInt(e.target.value);
+bpmDisplay.textContent = currentBPM;
+if (isPlaying) {
+startBeat();
+}
+});
+
+function updateFrequencyDisplay() {
+document.getElementById('freqDisplay').textContent = frequencies[currentMode].label;
+}
+
+// Initial display
+document.querySelector('[data-mode="gamma111"]').classList.add('active');
+updateFrequencyDisplay();
+
+// Animation loop
+function drawGeometry() {
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+const centerX = canvas.width / 2;
+
+// Draw connecting energy lines
+ctx.strokeStyle = 'rgba(255, 0, 255, 0.2)';
+ctx.lineWidth = 1;
+for (let i = 0; i < chakras.length - 1; i++) {
+const y1 = canvas.height * chakras[i].y;
+const y2 = canvas.height * chakras[i + 1].y;
+ctx.beginPath();
+ctx.moveTo(centerX, y1);
+ctx.lineTo(centerX, y2);
+ctx.stroke();
+}
+
+// Draw chakras
+chakras.forEach((chakra, i) => {
+const chakraY = canvas.height * chakra.y;
+const isActive = i === activeChakra;
+const pulse = isActive ? 1 + Math.sin(pulsePhase * 4) * 0.3 : 1 + Math.sin(pulsePhase + i) * 0.1;
+
+// Aura
+const gradient = ctx.createRadialGradient(centerX, chakraY, 0, centerX, chakraY, chakra.size * pulse * 2);
+gradient.addColorStop(0, chakra.color + (isActive ? 'ff' : '88'));
+gradient.addColorStop(0.5, chakra.color + (isActive ? '88' : '33'));
+gradient.addColorStop(1, chakra.color + '00');
+ctx.fillStyle = gradient;
+ctx.beginPath();
+ctx.arc(centerX, chakraY, chakra.size * pulse * 2, 0, Math.PI * 2);
+ctx.fill();
+
+// Core
+ctx.fillStyle = isActive ? '#ffffff' : chakra.color;
+ctx.shadowBlur = isActive ? 30 : 15;
+ctx.shadowColor = chakra.color;
+ctx.beginPath();
+ctx.arc(centerX, chakraY, chakra.size * pulse, 0, Math.PI * 2);
+ctx.fill();
+ctx.shadowBlur = 0;
+
+// Inner symbol - rotating
+ctx.strokeStyle = '#000000';
+ctx.lineWidth = 2;
+const sides = 6;
+ctx.beginPath();
+for (let j = 0; j <= sides; j++) {
+const angle = (j / sides) * Math.PI * 2 + rotation * 0.02;
+const r = chakra.size * pulse * 0.5;
+const x = centerX + Math.cos(angle) * r;
+const y = chakraY + Math.sin(angle) * r;
+if (j === 0) {
+ctx.moveTo(x, y);
+} else {
+ctx.lineTo(x, y);
+}
+}
+ctx.stroke();
+
+// Labels
+ctx.fillStyle = '#ffffff';
+ctx.font = isActive ? 'bold 16px Courier' : '14px Courier';
+ctx.textAlign = 'left';
+ctx.textBaseline = 'middle';
+ctx.fillText(chakra.vowel, centerX + chakra.size * pulse + 15, chakraY - 10);
+
+ctx.font = '11px Courier';
+ctx.fillStyle = '#00ffff';
+ctx.fillText(`${Math.round(chakra.freq)}Hz`, centerX + chakra.size * pulse + 15, chakraY + 10);
+
+ctx.fillStyle = '#8800ff';
+ctx.fillText(chakra.name, centerX - chakra.size * pulse - 15, chakraY);
+ctx.textAlign = 'right';
+});
+
+// Draw sacred geometry overlay - vesica piscis
+ctx.strokeStyle = 'rgba(255, 0, 255, 0.3)';
+ctx.lineWidth = 1.5;
+const r = canvas.height * 0.35;
+ctx.beginPath();
+ctx.arc(centerX - r * 0.25, canvas.height * 0.45, r, 0, Math.PI * 2);
+ctx.stroke();
+ctx.beginPath();
+ctx.arc(centerX + r * 0.25, canvas.height * 0.45, r, 0, Math.PI * 2);
+ctx.stroke();
+
+rotation += 0.5;
+pulsePhase += 0.05;
+if (pulsePhase > Math.PI * 2) pulsePhase = 0;
+
+requestAnimationFrame(drawGeometry);
+}
+
+// Start animation
+drawGeometry();
+</script>
+```
+
+</body>
+</html>
