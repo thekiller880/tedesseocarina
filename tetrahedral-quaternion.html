@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetrahedral Number Flow</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #0a0a0a 100%);
+            font-family: 'Courier New', monospace;
+        }
+        canvas {
+            display: block;
+            cursor: pointer;
+        }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #00ffff;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #00ffff;
+            max-width: 300px;
+        }
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            background: rgba(138, 43, 226, 0.8);
+            color: white;
+            border: 1px solid #00ffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: rgba(186, 85, 211, 1);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="info">
+        <strong>Tetrahedral Number Flow</strong><br>
+        Click to change mode<br>
+        Watch the numbers dance around the sacred geometry
+    </div>
+    <div id="controls">
+        <button onclick="changeSpeed(-1)">Slower</button>
+        <button onclick="changeSpeed(1)">Faster</button>
+        <button onclick="toggleMode()">Toggle Mode</button>
+    </div>
+
+```
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    let time = 0;
+    let speed = 1;
+    let mode = 0;
+    
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(canvas.width, canvas.height) * 0.3;
+    
+    class NumberParticle {
+        constructor(angle, value, distance) {
+            this.angle = angle;
+            this.value = value;
+            this.distance = distance;
+            this.size = 8;
+            this.opacity = 1;
+        }
+        
+        update() {
+            this.angle += 0.01 * speed;
+            this.distance = radius + Math.sin(time * 0.5 + this.angle * 3) * 30;
+        }
+        
+        draw() {
+            const x = centerX + Math.cos(this.angle) * this.distance;
+            const y = centerY + Math.sin(this.angle) * this.distance;
+            
+            ctx.save();
+            ctx.globalAlpha = this.opacity;
+            ctx.fillStyle = `hsl(${(this.angle * 180 / Math.PI + time * 50) % 360}, 80%, 60%)`;
+            ctx.beginPath();
+            ctx.arc(x, y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px Courier New';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(this.value, x, y);
+            ctx.restore();
+        }
+    }
+    
+    const particles = [];
+    for (let i = 0; i < 12; i++) {
+        particles.push(new NumberParticle(
+            (i / 12) * Math.PI * 2,
+            i + 1,
+            radius
+        ));
+    }
+    
+    function drawTetrahedron() {
+        const points = [];
+        for (let i = 0; i < 3; i++) {
+            const angle = (i / 3) * Math.PI * 2 - Math.PI / 2;
+            points.push({
+                x: centerX + Math.cos(angle) * radius,
+                y: centerY + Math.sin(angle) * radius
+            });
+        }
+        
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.lineDashOffset = -time * 2;
+        
+        // Draw triangle
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].x, points[i].y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+        
+        // Draw inner lines creating tetrahedron effect
+        const innerRadius = radius * 0.4;
+        for (let i = 0; i < 3; i++) {
+            const angle = (i / 3) * Math.PI * 2 - Math.PI / 2;
+            const innerX = centerX + Math.cos(angle) * innerRadius;
+            const innerY = centerY + Math.sin(angle) * innerRadius;
+            
+            ctx.beginPath();
+            ctx.moveTo(points[i].x, points[i].y);
+            ctx.lineTo(innerX, innerY);
+            ctx.stroke();
+        }
+        
+        ctx.setLineDash([]);
+    }
+    
+    function drawCentralCircle() {
+        const pulseRadius = 50 + Math.sin(time * 2) * 10;
+        
+        // Outer glow
+        const gradient = ctx.createRadialGradient(
+            centerX, centerY, 0,
+            centerX, centerY, pulseRadius * 1.5
+        );
+        gradient.addColorStop(0, 'rgba(138, 43, 226, 0.8)');
+        gradient.addColorStop(0.5, 'rgba(138, 43, 226, 0.3)');
+        gradient.addColorStop(1, 'rgba(138, 43, 226, 0)');
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, pulseRadius * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Main circle
+        ctx.strokeStyle = '#ff00ff';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, pulseRadius, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // Eye in center
+        ctx.fillStyle = '#00ffff';
+        ctx.font = '24px Courier New';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('∞', centerX, centerY);
+    }
+    
+    function drawConnections() {
+        ctx.strokeStyle = 'rgba(0, 255, 255, 0.2)';
+        ctx.lineWidth = 1;
+        
+        for (let i = 0; i < particles.length; i++) {
+            const p1 = particles[i];
+            const x1 = centerX + Math.cos(p1.angle) * p1.distance;
+            const y1 = centerY + Math.sin(p1.angle) * p1.distance;
+            
+            // Connect to center
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(centerX, centerY);
+            ctx.stroke();
+            
+            // Connect to neighbors
+            if (mode === 1) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const x2 = centerX + Math.cos(p2.angle) * p2.distance;
+                    const y2 = centerY + Math.sin(p2.angle) * p2.distance;
+                    
+                    const dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+                    if (dist < 200) {
+                        ctx.globalAlpha = 0.3 * (1 - dist / 200);
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                        ctx.globalAlpha = 1;
+                    }
+                }
+            }
+        }
+    }
+    
+    function drawMultiplicationLines() {
+        // Draw lines showing multiplication patterns
+        ctx.strokeStyle = 'rgba(255, 0, 255, 0.3)';
+        ctx.lineWidth = 1;
+        
+        for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+            const target = particles[(i * 2) % particles.length];
+            
+            const x1 = centerX + Math.cos(p.angle) * p.distance;
+            const y1 = centerY + Math.sin(p.angle) * p.distance;
+            const x2 = centerX + Math.cos(target.angle) * target.distance;
+            const y2 = centerY + Math.sin(target.angle) * target.distance;
+            
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+    }
+    
+    function animate() {
+        time += 0.02 * speed;
+        
+        // Clear with trail effect
+        ctx.fillStyle = 'rgba(10, 10, 26, 0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        drawTetrahedron();
+        drawCentralCircle();
+        
+        if (mode === 0) {
+            drawMultiplicationLines();
+        }
+        
+        drawConnections();
+        
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+        
+        requestAnimationFrame(animate);
+    }
+    
+    function changeSpeed(delta) {
+        speed = Math.max(0.1, Math.min(3, speed + delta * 0.3));
+    }
+    
+    function toggleMode() {
+        mode = (mode + 1) % 2;
+    }
+    
+    canvas.addEventListener('click', toggleMode);
+    
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+    
+    animate();
+</script>
+```
+
+</body>
+</html>
